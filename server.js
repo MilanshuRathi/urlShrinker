@@ -6,9 +6,8 @@ const port=process.env.port||3000;
 const URL=require(`${__dirname}/models/urlModel.js`);
 app.use(express.urlencoded({extended:true}));
 mongoose.connect(process.env.DB,{useNewUrlParser:true,useUnifiedTopology:true}).then(()=>console.log('Connected to DB successfully'));
-app.set('view engine','ejs');
 app.get('/',async(request,response)=>{           
-    response.render('homePage.ejs');
+    response.sendFile(`${__dirname}/views/homePage.html`);
 });
 app.get('/getData',async(request,response)=>{
     const shortUrls=await URL.find();        
