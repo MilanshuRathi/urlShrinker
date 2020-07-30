@@ -10,6 +10,7 @@ It is a microservice which can be used to shrink long string of urls into small 
  4. Dotenv 
  5. Cors
  6. shortid
+ 7. nodemon
  
 ### Installation and Running
  1. Download or clone the project 
