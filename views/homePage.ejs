@@ -79,22 +79,24 @@ function isValidURL(string) {
         });        
     form.addEventListener('submit',event=>{
         event.preventDefault();
-        if(isValidURL(urlBox.value)){
-            console.log(urlBox.value);
-            fetch('/shrinkUrl',{headers:{"Content-type":"application/json"},method:"POST",body:JSON.stringify({long:urlBox.value})}).then(response=>response.json()).then(data=>{
+        // let formData=new FormData();
+        // formData.append('long',urlBox.value);        
+        if(isValidURL(urlBox.value)){            
+            fetch('/shrinkUrl',{method:"POST",body:new URLSearchParams(`long=${urlBox.value}&valid=true`)}).then(response=>response.json()).then(data=>{
                     const tableDiv=document.getElementById('wrapperBox').innerHTML; 
                     if(data.status==='fail'){
-                        document.getElementById('wrapperBox').innerHTML='<h3 style="color:black">ERROR Wrong URL</h3>';
+                        document.getElementById('wrapperBox').innerHTML='<h3 style="color:black">URL Already Exists</h3>';
                         setTimeout(()=>{document.getElementById('wrapperBox').innerHTML=tableDiv;},2000);                        
                     }                        
                     else{
-                            const bigUrl=data.long,smallUrl=data.shrinkedUrl;             
-                            const tableBod=document.querySelector('tbody');
+                            const bigUrl=data.data.long,smallUrl=data.data.shrinkedUrl;             
+                            const tableBody=document.querySelector('tbody');
                             const newRow=tableBody.insertRow();
                             const c1=newRow.insertCell(0),c2=newRow.insertCell(1);
                             c1.innerHTML=`<td ><a class="text-center" href="${bigUrl}">${bigUrl}</a></td>`;
-                            c2.innerHTML=`<td"><a class="text-center" href="${smallUrl}">${smallUrl}</a></td>`;             
+                            c2.innerHTML=`<td"><a class="text-center" href="${smallUrl}">${smallUrl}</a></td>`;                                         
                     }
+                    urlBox.value='';
             }).catch(err=>console.log(err));
         }
         else{

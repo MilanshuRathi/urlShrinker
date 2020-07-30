@@ -1,12 +1,10 @@
 require('dotenv').config();
 const mongoose=require('mongoose');
 const express=require('express');
-const validator = require('validator');
-const { response } = require('express');
 const app=express();
 const port=process.env.port||3000;
 const URL=require(`${__dirname}/models/urlModel.js`);
-app.use(express.urlencoded({extended:false}));
+app.use(express.urlencoded({extended:true}));
 mongoose.connect(process.env.DB,{useNewUrlParser:true,useUnifiedTopology:true}).then(()=>console.log('Connected to DB successfully'));
 app.set('view engine','ejs');
 app.get('/',async(request,response)=>{           
@@ -19,11 +17,10 @@ app.get('/getData',async(request,response)=>{
         shortUrls
     })
 });
-app.post('/shrinkUrl',async(request,response)=>{
+app.post('/shrinkUrl',async(request,response)=>{    
     const longUrl=request.body.long;
-    let finalObject; 
-    console.log(request.headers);   
-    if(longUrl&&!await URL.findOne({long:longUrl}))
+    let finalObject;       
+    if(!await URL.findOne({long:longUrl}))
         finalObject=await URL.create({long:longUrl}); 
     else
         return response.status(400).json({status:'fail',message:'Not valid'});
