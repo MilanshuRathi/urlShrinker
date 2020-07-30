@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <style>
+        body{
+            background-image:linear-gradient(to right,rgb(52, 235, 92),rgb(52, 235, 158));
+            color: white;
+        }
+        table{
+            background-color:white;
+            border-radius:10px ;            
+        }
+        td{
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-align: center;
+        }
+        /* tr:hover{
+            background-color: rgb(52, 235, 158);
+        } */
+        /* form{
+            background-color: white;
+            color: black;
+        } */
+    </style>    
+<!-- JS, Popper.js, and jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <title>URL Shortener</title>
+</head>
+<body>
+    <div class="container my-4">
+    <h1 class="text-center">URL Shrinker</h1>
+    <form class="my-4 form-inline">
+        <!-- <label for="longUrl" class="sr-only">Long URL</label> -->
+        <input required type="text" placeholder="https://www.youtube.com/" id="longUrl" class="form-control mr-2 col" name="longUrl">
+        <button type="submit" class="btn btn-primary" id="submitBtn">Shrink it</button>
+        <div class="table-responsive" id="wrapperBox">
+            <table class="table my-4">
+            <thead>
+                <tr>
+                    <th class="text-center">
+                        Long URL
+                    </th>
+                    <th class="text-center">
+                        Shrinked URL                    
+                </tr>
+            </thead>
+            <tbody>
+                
+            </tbody>
+        </table>
+    </div>
+    </form>       
+</div>
+<script>  
+function isValidURL(string) {
+  const  res = string.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
+  return (res !== null)
+};
+
+    const form=document.querySelector('form');
+    const urlBox=document.getElementById('longUrl');
+     fetch('/getData').then(response=>response.json()).then(data=>{
+         data.shortUrls.forEach(element => {
+             const bigUrl=element.long,smallUrl=element.shrinkedUrl;             
+             const tableBody=document.querySelector('tbody');
+             const newRow=tableBody.insertRow();
+             const c1=newRow.insertCell(0),c2=newRow.insertCell(1);
+             c1.innerHTML=`<td ><a class="text-center" href="${bigUrl}">${bigUrl}</a></td>`;
+             c2.innerHTML=`<td"><a class="text-center" href="${smallUrl}">${smallUrl}</a></td>`;             
+         });
+        });        
+    form.addEventListener('submit',event=>{
+        event.preventDefault();
+        if(isValidURL(urlBox.value)){
+            console.log(urlBox.value);
+            fetch('/shrinkUrl',{headers:{"Content-type":"application/json"},method:"POST",body:JSON.stringify({long:urlBox.value})}).then(response=>response.json()).then(data=>{
+                    const tableDiv=document.getElementById('wrapperBox').innerHTML; 
+                    if(data.status==='fail'){
+                        document.getElementById('wrapperBox').innerHTML='<h3 style="color:black">ERROR Wrong URL</h3>';
+                        setTimeout(()=>{document.getElementById('wrapperBox').innerHTML=tableDiv;},2000);                        
+                    }                        
+                    else{
+                            const bigUrl=data.long,smallUrl=data.shrinkedUrl;             
+                            const tableBod=document.querySelector('tbody');
+                            const newRow=tableBody.insertRow();
+                            const c1=newRow.insertCell(0),c2=newRow.insertCell(1);
+                            c1.innerHTML=`<td ><a class="text-center" href="${bigUrl}">${bigUrl}</a></td>`;
+                            c2.innerHTML=`<td"><a class="text-center" href="${smallUrl}">${smallUrl}</a></td>`;             
+                    }
+            }).catch(err=>console.log(err));
+        }
+        else{
+            const tableDiv=document.getElementById('wrapperBox').innerHTML; 
+            document.getElementById('wrapperBox').innerHTML='<h3 style="color:black">ERROR Wrong URL</h3>';
+                        setTimeout(()=>{document.getElementById('wrapperBox').innerHTML=tableDiv;},2000);
+        }
+    });
+</script> 
+</body>
+</html>

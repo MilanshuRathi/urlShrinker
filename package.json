@@ -1,0 +1,30 @@
+{
+  "name": "urlshrinker",
+  "version": "1.0.0",
+  "description": "a microservice to shrink long urls into short ones.",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MilanshuRathi/urlShrinker.git"
+  },
+  "author": "Milanshu Rathi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MilanshuRathi/urlShrinker/issues"
+  },
+  "homepage": "https://github.com/MilanshuRathi/urlShrinker#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "ejs": "^3.1.3",
+    "express": "^4.17.1",
+    "mongoose": "^5.9.26",
+    "shortid": "^2.2.15",
+    "validator": "^13.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
